@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from typing import Optional
 
 app = FastAPI(title="Todo API", version="1.0") # ASGI application server
 
@@ -24,3 +25,19 @@ async def read_todo_priority(todo_id: int, priority: str):
         "priority": priority.upper(),
         "item": f"High priority task {todo_id}"
     }
+
+
+@app.get("/todos/")
+async def read_todos(skip: Optional[int] = 0, limit: Optional[int] = 100):
+    """ List todos with pagination."""
+    return {
+        "skip": skip,
+        "limit": limit,
+        "todos": [{"id":i} for i in range(1, limit + 1)]
+    }
+
+@app.get("/search/")
+async def search_todos(q: str, category: Optional[str] = None):
+    """Search with required query param + optional."""
+    return {"query": q, "category": category, "results": []}
+
